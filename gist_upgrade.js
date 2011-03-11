@@ -6,10 +6,10 @@
 jQuery(function ($) {
     $(document).ready(function () {
         $('pre.fake-gist[id]').each(function () {
-            var $this = $(this);
-            var id = $this.attr('id').match(/\d+/)[0];
+            var id = $(this).attr('id');
+            var gistID = $(this).attr('id').match(/\d+/)[0];
 
-            $this.removeAttr('id').wrap(
+            $(this).removeAttr('id').wrap(
                 /* first we wrap with the various classes */
                 '<div class="gist">' +
                     '<div class="gist-file">' +
@@ -20,22 +20,31 @@ jQuery(function ($) {
                         '</div>' +
                         /* and add the blurb at the bottom (no raw link though) */
                         '<div class="gist-meta">' +
-                            '<a href="http://gist.github.com/'+ id +'">This Gist</a>' +
+                            '<a href="http://gist.github.com/'+ gistID +'">This Gist</a>' +
                             ' brought to you by <a href="http://github.com">GitHub</a>.' +
                         '</div>' +
                     '</div>' +
                 '</div>'
-            ).parents('div.gist:first').attr('id', 'fake-gist-'+id);
+            ).parents('div.gist:first').attr('id', id);
 
         });
     });
 
     $(window).load(function () {
         $('div.gist[id]').each(function () {
-            var id = $(this).attr('id').match(/\d+/)[0];
+            var $this = $(this);
+            var id = $this.attr('id');
+            var gistID = $this.attr('id').match(/\d+/)[0];
+
+            /* check whether filename specified */
+            function fileCheck() {
+                if (file = id.match(/fake-gist-\d+-(.+)/)) {
+                    return "file=" + file[1] + "&"
+                } else { return "" }
+            }
 
             /* asynchronously fetch the gist data */
-            $.getJSON("http://gist.github.com/"+ id +".json?callback=?", function (gist) {
+            $.getJSON("http://gist.github.com/"+ gistID +".json?" + fileCheck() + "callback=?", function (gist) {
                 /* Figure out if we need to add the stylesheet
                  *
                  * for some reason
@@ -52,7 +61,7 @@ jQuery(function ($) {
                     $("head").append('<link rel="stylesheet" href="' + gist.stylesheet + '" />');
 
                 /* find the fake gist and replace it with the marked up one */
-                $('#fake-gist-'+gist.repo).replaceWith(gist.div);
+                $this.replaceWith(gist.div);
             });
         });
     });
