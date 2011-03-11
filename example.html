@@ -19,6 +19,10 @@ use Moose;
 has fun =&gt; ( isa =&gt; &quot;Constant&quot; );</pre>
 
 
+<!-- fetch a particular file from a multi-file gist with 'make_pre_tag.pl 865210 file2.txt' -->
+<pre id="fake-gist-865210-file2.txt" class="fake-gist">&#39;sup, file two!</pre>
+
+
 <!-- this is a pre block that will be posted and replaced by update.pl if run -->
 <pre class="fake-gist" lang="pl"><![CDATA[
 my $updated = $container->clone(
